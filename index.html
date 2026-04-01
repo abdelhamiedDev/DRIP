@@ -216,8 +216,8 @@
           return;
         }
 
-        // Show only first 4 as "featured"
-        grid.innerHTML = products.slice(0, 4).map(p => `
+        // Show only first 6 as "featured"
+        grid.innerHTML = products.slice(0, 6).map(p => `
           <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
             <img src="${p.image_url}" alt="${p.name}" />
             <div class="product-card-info">
