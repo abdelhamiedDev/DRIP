@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRIP — Shop</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .shop-header {
+      border-bottom: 1px solid var(--border);
+      padding: 48px 40px 32px;
+    }
+
+    .shop-meta {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .shop-body {
+      padding: 40px 40px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .shop-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    #product-count {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <div class="shop-header">
+    <p class="shop-meta">SS 2026 Collection</p>
+    <h1 class="page-title" style="margin-bottom:0">ALL PRODUCTS</h1>
+  </div>
+
+  <div class="shop-body">
+    <div class="shop-toolbar">
+      <!-- Filter Buttons -->
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-btn active" data-cat="all">All</button>
+        <button class="filter-btn" data-cat="tops">Tops</button>
+        <button class="filter-btn" data-cat="bottoms">Bottoms</button>
+        <button class="filter-btn" data-cat="accessories">Accessories</button>
+      </div>
+      <span id="product-count"></span>
+    </div>
+
+    <!-- Products injected here -->
+    <div id="product-grid" class="product-grid">
+      <div class="loading">Loading</div>
+    </div>
+  </div>
+
+  <footer><p>© 2026 DRIP — All Rights Reserved</p></footer>
+  <div id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    let allProducts = [];
+    let activeCategory = 'all';
+
+    // Fetch all products from backend
+    async function loadProducts() {
+      const grid = document.getElementById('product-grid');
+      try {
+        const res = await fetch(`${API}/products`);
+        allProducts = await res.json();
+        renderProducts();
+      } catch (err) {
+        grid.innerHTML = `<div class="empty-state"><h3>Backend Offline</h3><p>Start your server with: node server.js</p></div>`;
+      }
+    }
+
+    // Render filtered products
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      const countEl = document.getElementById('product-count');
+
+      const filtered = activeCategory === 'all'
+        ? allProducts
+        : allProducts.filter(p => p.category === activeCategory);
+
+      countEl.textContent = `${filtered.length} item${filtered.length !== 1 ? 's' : ''}`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><h3>No Items</h3><p>Nothing in this category yet.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => `
+        <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
+          <img src="${p.image_url}" alt="${p.name}" />
+          <div class="product-card-info">
+            <p class="product-card-category">${p.category}</p>
+            <h3 class="product-card-name">${p.name}</h3>
+            <div class="product-card-footer">
+              <span class="product-card-price">$${parseFloat(p.price).toFixed(2)}</span>
+              <button class="add-btn" onclick="event.stopPropagation(); addToCart({id:${p.id}, name:'${p.name}', price:${p.price}, image_url:'${p.image_url}'})">
+                + Add
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Filter button click
+    document.getElementById('filter-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = btn.dataset.cat;
+      renderProducts();
+    });
+
+    document.addEventListener('DOMContentLoaded', loadProducts);
+  </script>
+
+</body>
+</html>

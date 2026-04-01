@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRIP — Cart</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .cart-layout {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* ── CART ITEMS ── */
+    .cart-items-section h2 {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      letter-spacing: 2px;
+      margin-bottom: 32px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 20px;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .cart-item img {
+      width: 90px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .cart-item-name {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .cart-item-size {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      background: var(--gray);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-size: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      line-height: 1;
+    }
+    .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .qty-value {
+      font-size: 15px;
+      font-weight: 600;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .cart-item-right {
+      text-align: right;
+    }
+
+    .cart-item-price {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: underline;
+      padding: 0;
+      transition: color var(--transition);
+    }
+    .remove-btn:hover { color: #ff4444; }
+
+    /* ── ORDER SUMMARY ── */
+    .order-summary {
+      background: var(--gray);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      position: sticky;
+      top: 80px;
+    }
+
+    .order-summary h3 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .summary-line.total {
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      margin-top: 8px;
+    }
+
+    .summary-line.total span:last-child { color: var(--accent); }
+
+    .checkout-btn {
+      margin-top: 24px;
+      display: block;
+    }
+
+    .continue-link {
+      display: block;
+      text-align: center;
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color var(--transition);
+    }
+    .continue-link:hover { color: var(--white); }
+
+    @media (max-width: 768px) {
+      .cart-layout { grid-template-columns: 1fr; }
+      .order-summary { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="navbar"></div>
+
+  <div class="cart-layout">
+
+    <!-- LEFT: Cart Items -->
+    <div class="cart-items-section">
+      <h2>YOUR CART</h2>
+      <div id="cart-items-list"></div>
+    </div>
+
+    <!-- RIGHT: Order Summary -->
+    <div class="order-summary">
+      <h3>SUMMARY</h3>
+      <div class="summary-line">
+        <span>Subtotal</span>
+        <span id="subtotal">$0.00</span>
+      </div>
+      <div class="summary-line">
+        <span>Shipping</span>
+        <span id="shipping">Free</span>
+      </div>
+      <div class="summary-line total">
+        <span>Total</span>
+        <span id="total">$0.00</span>
+      </div>
+      <a href="checkout.html" class="btn-primary checkout-btn" id="checkout-btn"
+         style="text-align:center;display:block">
+        Proceed to Checkout
+      </a>
+      <a href="shop.html" class="continue-link">← Continue Shopping</a>
+    </div>
+
+  </div>
+
+  <div id="toast"></div>
+  <footer><p>© 2026 DRIP — All Rights Reserved</p></footer>
+
+  <script src="app.js"></script>
+  <script>
+    function renderCart() {
+      const cart = getCart();
+      const listEl = document.getElementById('cart-items-list');
+      const subtotalEl = document.getElementById('subtotal');
+      const totalEl    = document.getElementById('total');
+      const shippingEl = document.getElementById('shipping');
+      const checkoutBtn = document.getElementById('checkout-btn');
+
+      if (cart.length === 0) {
+        listEl.innerHTML = `
+          <div class="empty-state">
+            <h3>Cart is Empty</h3>
+            <p style="margin-bottom:24px">You haven't added anything yet.</p>
+            <a href="shop.html" class="btn-primary" style="display:inline-block;width:auto;padding:14px 32px">Shop Now</a>
+          </div>`;
+        subtotalEl.textContent = '$0.00';
+        totalEl.textContent    = '$0.00';
+        shippingEl.textContent = 'Free';
+        checkoutBtn.style.opacity = '0.4';
+        checkoutBtn.style.pointerEvents = 'none';
+        return;
+      }
+
+      checkoutBtn.style.opacity = '1';
+      checkoutBtn.style.pointerEvents = 'auto';
+
+      listEl.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <img src="${item.image_url}" alt="${item.name}" />
+          <div>
+            <p class="cart-item-name">${item.name}</p>
+            <p class="cart-item-size">${item.size ? `Size: ${item.size}` : ''}</p>
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+              <span class="qty-value">${item.quantity}</span>
+              <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+            </div>
+          </div>
+          <div class="cart-item-right">
+            <p class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</p>
+            <button class="remove-btn" onclick="removeItem(${item.id})">Remove</button>
+          </div>
+        </div>
+      `).join('');
+
+      const subtotal = getCartTotal();
+      const shipping = subtotal >= 100 ? 0 : 9.99;
+      subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+      shippingEl.textContent = shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`;
+      totalEl.textContent    = `$${(subtotal + shipping).toFixed(2)}`;
+    }
+
+    function changeQty(id, delta) {
+      const cart = getCart();
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.quantity += delta;
+      if (item.quantity <= 0) {
+        removeFromCart(id);
+      } else {
+        saveCart(cart);
+      }
+      renderCart();
+    }
+
+    function removeItem(id) {
+      removeFromCart(id);
+      renderCart();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCart);
+  </script>
+
+</body>
+</html>

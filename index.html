@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRIP — New Drop</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── HERO ── */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: flex-end;
+      padding: 80px 40px;
+      position: relative;
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 70% at 80% 40%, rgba(200,255,0,0.07) 0%, transparent 60%),
+        linear-gradient(160deg, #111 0%, #0a0a0a 100%);
+    }
+
+    .hero-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 12vw, 10rem);
+      line-height: 0.9;
+      letter-spacing: -2px;
+      color: var(--white);
+      margin-bottom: 32px;
+    }
+
+    .hero-title span { color: var(--accent); }
+
+    .hero-sub {
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 360px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--accent);
+      color: var(--black);
+      padding: 16px 36px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: opacity 0.2s;
+    }
+    .hero-cta:hover { opacity: 0.85; }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-badge {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      width: 110px;
+      height: 110px;
+      background: var(--accent);
+      color: var(--black);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      line-height: 1.2;
+      text-align: center;
+      animation: rotate 8s linear infinite;
+    }
+
+    @keyframes rotate { to { transform: rotate(360deg); } }
+
+    /* ── FEATURED ── */
+    .featured {
+      padding: 80px 40px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      letter-spacing: 2px;
+    }
+
+    .see-all {
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--muted);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .see-all:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── MARQUEE BANNER ── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 14px 0;
+      background: var(--gray);
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 48px;
+      white-space: nowrap;
+      animation: marquee 18s linear infinite;
+      width: max-content;
+    }
+
+    .marquee-track span {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .marquee-track span.dot { color: var(--accent); }
+
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR (injected by app.js) -->
+  <div id="navbar"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-badge">NEW<br>DROP</div>
+    <div class="hero-content">
+      <p class="hero-label">SS 2026 Collection</p>
+      <h1 class="hero-title">WEAR<br>THE <span>VOID</span></h1>
+      <p class="hero-sub">Limited edition streetwear. No restock. No reruns. Cop it or watch it disappear.</p>
+      <a href="shop.html" class="hero-cta">Shop the Drop →</a>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Free Shipping on Orders Over $100</span><span class="dot">✦</span>
+      <span>New Drop — SS 2026</span><span class="dot">✦</span>
+      <span>Limited Stock</span><span class="dot">✦</span>
+      <span>No Restock Policy</span><span class="dot">✦</span>
+      <span>Free Shipping on Orders Over $100</span><span class="dot">✦</span>
+      <span>New Drop — SS 2026</span><span class="dot">✦</span>
+      <span>Limited Stock</span><span class="dot">✦</span>
+      <span>No Restock Policy</span><span class="dot">✦</span>
+    </div>
+  </div>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="featured">
+    <div class="section-header">
+      <h2 class="section-title">FEATURED</h2>
+      <a href="shop.html" class="see-all">View All</a>
+    </div>
+
+    <!-- Products are injected here by JavaScript -->
+    <div id="featured-grid" class="product-grid">
+      <div class="loading">Loading products</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 DRIP — All Rights Reserved</p>
+  </footer>
+
+  <!-- TOAST -->
+  <div id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // Fetch products from your backend and display the first 4
+    async function loadFeatured() {
+      const grid = document.getElementById('featured-grid');
+      try {
+        const res  = await fetch(`${API}/products`);
+        const products = await res.json();
+
+        if (products.length === 0) {
+          grid.innerHTML = `<div class="empty-state"><h3>No Products Yet</h3><p>Add products from the admin panel.</p></div>`;
+          return;
+        }
+
+        // Show only first 4 as "featured"
+        grid.innerHTML = products.slice(0, 4).map(p => `
+          <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
+            <img src="${p.image_url}" alt="${p.name}" />
+            <div class="product-card-info">
+              <p class="product-card-category">${p.category}</p>
+              <h3 class="product-card-name">${p.name}</h3>
+              <div class="product-card-footer">
+                <span class="product-card-price">$${parseFloat(p.price).toFixed(2)}</span>
+                <button class="add-btn" onclick="event.stopPropagation(); addToCart({id:${p.id}, name:'${p.name}', price:${p.price}, image_url:'${p.image_url}'})">
+                  + Add
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        grid.innerHTML = `<div class="empty-state"><h3>Backend Offline</h3><p>Make sure your server is running on port 5000.</p></div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadFeatured);
+  </script>
+
+</body>
+</html>
