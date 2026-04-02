@@ -1,4 +1,4 @@
 node_modules/
 .env
 package-lock.json
-drip_store
+drip_store.sql
