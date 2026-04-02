@@ -1,7 +1,7 @@
 // ========================
 // CONFIGURATION
 // ========================
-const API = 'http://localhost:5000/api';
+const API = 'https://drip-production-deca.up.railway.app/api';
 
 
 // ========================
