@@ -82,6 +82,8 @@ function renderNavbar() {
         <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
         <a href="admin.html">Admin</a>
+        <a href="login.html">SIGN IN</a>
+        <a href="register.html">CREATE ACCOUNT</a>
       </div>
       <div class="navbar-actions">
         <a href="cart.html" class="cart-btn">
