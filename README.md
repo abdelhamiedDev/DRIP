@@ -215,4 +215,4 @@ Check your `.env` values and verify MySQL credentials.
 
 ## Author
 
-Built by AbdelHameed as a university project.
+Built by الاتحاد السكندري as a university project.
