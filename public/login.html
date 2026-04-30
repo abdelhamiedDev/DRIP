@@ -336,43 +336,33 @@
         }
 
         /* ── submit ── */
-        function handleLogin() {
-            const email    = document.getElementById('email');
-            const password = document.getElementById('password');
-            const emailErr = document.getElementById('email-err');
-            const passErr  = document.getElementById('pass-err');
-            const errorBanner = document.getElementById('error');
+        async function handleLogin() {
+            const email    = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
-            let valid = true;
+            if (!email || !password) return alert('Fill in all fields');
 
-            // Reset states
-            email.classList.remove('err');
-            password.classList.remove('err');
-            emailErr.classList.remove('show');
-            passErr.classList.remove('show');
-            errorBanner.classList.remove('show');
+            try {
+                const res = await fetch(`${API}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (!res.ok) return alert(data.error);
 
-            // Validate email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email.value.trim())) {
-                email.classList.add('err');
-                emailErr.classList.add('show');
-                valid = false;
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('role', data.role);
+                localStorage.setItem('full_name', data.full_name);
+
+                document.getElementById('success').classList.add('show');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => window.location.href = 'index.html', 1500);
+            } catch (err) {
+                alert('Backend offline');
             }
-
-            // Validate password
-            if (!password.value) {
-                password.classList.add('err');
-                passErr.classList.add('show');
-                valid = false;
-            }
-
-            if (!valid) return;
-
-            // Show success banner
-            document.getElementById('success').classList.add('show');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+        
     </script>
 
     <script src="app.js"></script>

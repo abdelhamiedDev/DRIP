@@ -1,7 +1,9 @@
 // ========================
 // CONFIGURATION
 // ========================
-const API = 'https://drip-production-deca.up.railway.app/api';
+const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api'
+  : 'https://drip-production-deca.up.railway.app/api'; // Change this to your actual API endpoint
 
 
 // ========================
@@ -75,17 +77,25 @@ function showToast(message) {
 function renderNavbar() {
   const nav = document.getElementById('navbar');
   if (!nav) return;
+  const role = localStorage.getItem('role');
+  const token = localStorage.getItem('token');
+  const full_name = localStorage.getItem('full_name');
+
   nav.innerHTML = `
     <nav class="navbar">
       <a href="index.html" class="navbar-logo">DRIP</a>
       <div class="navbar-links">
         <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
-        <a href="admin.html">Admin</a>
-        <a href="login.html">SIGN IN</a>
-        <a href="register.html">CREATE ACCOUNT</a>
+        ${role === 'admin' ? '<a href="admin.html">Admin</a>' : ''}
       </div>
       <div class="navbar-actions">
+        ${token
+          ? `<span style="font-size:12px;color:var(--muted);letter-spacing:1px">${full_name}</span>
+             <button onclick="logout()" class="btn-outline" style="padding:8px 16px;font-size:12px">Logout</button>`
+          : `<a href="login.html" style="font-size:13px;letter-spacing:2px;color:var(--muted)">Sign In</a>
+             <a href="register.html" style="font-size:13px;letter-spacing:2px;color:var(--muted)">Register</a>`
+        }
         <a href="cart.html" class="cart-btn">
           🛒 Cart <span id="cart-count">0</span>
         </a>
@@ -95,6 +105,13 @@ function renderNavbar() {
   updateCartCount();
 }
 
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+  localStorage.removeItem('full_name');
+  localStorage.removeItem('cart');
+  window.location.href = 'index.html';
+}
 
 // ========================
 // RUN ON EVERY PAGE LOAD

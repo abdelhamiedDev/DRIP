@@ -65,7 +65,7 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
-app.delete('/api/products/:id', async (req, res) => {
+app.delete('/api/products/:id', requireAdmin, async (req, res) => {
   try {
     await pool.query('DELETE FROM products WHERE id = ?', [req.params.id]);
     res.json({ message: 'Product deleted' });
@@ -75,7 +75,7 @@ app.delete('/api/products/:id', async (req, res) => {
 });
 
 // ORDERS
-app.post('/api/orders', async (req, res) => {
+app.post('/api/orders', requireAdmin, async (req, res) => {
   try {
     const { customer_name, customer_email, total, items } = req.body;
 
@@ -99,7 +99,7 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 
-app.get('/api/orders', async (req, res) => {
+app.get('/api/orders', requireAdmin, async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM orders ORDER BY created_at DESC');
     res.json(rows);
@@ -107,6 +107,62 @@ app.get('/api/orders', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'drip_secret_key';
+
+function requireAdmin(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token' });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (decoded.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+    req.user = decoded;
+    next();
+  } catch {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+}
+
+// REGISTER
+app.post('/api/register', async (req, res) => {
+  try {
+    const { full_name, email, password } = req.body;
+    const hashed = await bcrypt.hash(password, 10);
+    await pool.query(
+      'INSERT INTO users (full_name, email, password) VALUES (?, ?, ?)',
+      [full_name, email, hashed]
+    );
+    res.json({ message: 'Account created' });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      res.status(400).json({ error: 'Email already registered' });
+    } else {
+      res.status(500).json({ error: err.message });
+    }
+  }
+});
+
+// LOGIN
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (rows.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
+    const user = rows[0];
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ error: 'Invalid credentials' });
+    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, role: user.role, full_name: user.full_name });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -419,6 +419,7 @@
 
 
 
+    <script src="app.js"></script>
     <script>
         /* ── password show/hide ── */
         function togglePass(inputId, btn) {
@@ -456,13 +457,38 @@
         }
 
         /* ── submit ── */
-        function handleRegister() {
+
+        async function handleRegister() {
+
+            const full_name = document.getElementById('full-name').value.trim();
+            const email     = document.getElementById('email').value.trim();
+            const password  = document.getElementById('password').value;
+            const confirm   = document.getElementById('confirm-password').value;
+            const terms     = document.getElementById('terms').checked;
+
+            if (!full_name || !email || !password) return alert('Fill in all fields');
+            if (password !== confirm) return alert('Passwords do not match');
+            if (!terms) return alert('Accept the terms first');
+
+            try {
+                const res = await fetch(`${API}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ full_name, email, password })
+                });
+
+            const data = await res.json();
+            if (!res.ok) return alert(data.error);
             document.getElementById('success').classList.add('show');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => window.location.href = 'login.html', 1500);
+            } catch (err) {
+            alert('Backend offline');
+            }
         }
+        
     </script>
 
-    <script src="app.js"></script>
 </body>
 </html>
 
