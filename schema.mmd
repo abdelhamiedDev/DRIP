@@ -1,0 +1,38 @@
+erDiagram
+    users {
+        int id PK
+        varchar full_name
+        varchar email UK
+        varchar password
+        enum role
+        timestamp created_at
+    }
+
+    orders {
+        int id PK
+        varchar customer_name
+        varchar customer_email
+        decimal total
+        timestamp created_at
+    }
+
+    products {
+        int id PK
+        varchar name
+        decimal price
+        enum category
+        text image_url
+        text description
+        timestamp created_at
+    }
+
+    order_items {
+        int id PK
+        int order_id FK
+        int product_id FK
+        int quantity
+        decimal price
+    }
+
+    orders ||--o{ order_items : "places"
+    products ||--o{ order_items : "included_in"
