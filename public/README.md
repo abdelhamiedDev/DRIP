@@ -34,24 +34,30 @@ It uses:
 
 ## Project Structure
 
+ 
 ```bash
-DRIP/
+WEB-PROJECT/
 │
-├── index.html
-├── shop.html
-├── product.html
-├── cart.html
-├── checkout.html
-├── admin.html
-├── style.css
-├── app.js
+├── public/
+│   ├── index.html
+│   ├── shop.html
+│   ├── product.html
+│   ├── cart.html
+│   ├── checkout.html
+│   ├── admin.html
+│   ├── login.html
+│   ├── register.html
+│   ├── app.js
+│   └── style.css
 │
 ├── backend/
 │   ├── server.js
 │   ├── package.json
 │   └── .env
 │
-└── drip_store.sql
+├── .gitignore
+├── drip_store.sql
+└── README.md
 ```
 
 ## Live Demo
